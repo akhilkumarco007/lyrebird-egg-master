@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 
 # weight and bais wrappers
@@ -42,9 +43,23 @@ def LSTM(x, weights, biases, num_hidden, seqLen, mode):
         w_repeated = tf.tile(tf.expand_dims(weights, 0), [num_examples, 1, 1])
         out = tf.matmul(outputs, w_repeated) + biases
         out = tf.squeeze(out)
+    elif mode == 'infer':
+        initial_seed_input = np.array([[0, 0, 0]])
+        multi_lstm_cell = tf.nn.rnn_cell.MultiRNNCell([lstm_cell(num_hidden) for _ in range(2)])
+        state = tf.zeros((256, 256))
+        out = []
+        time_steps = 800
+        for t in range(time_steps):
+            if t == 0:
+                output, state = multi_lstm_cell(initial_seed_input, state)
+                out.append(output)
+            else:
+                output, state = multi_lstm_cell(out[t - 1], state)
+                out.append(output)
     else:
-        out = 0
+        raise ValueError('Use train or infer for mode')
     return out
+
 
 def lstm_cell(n_hidden):
     lstm = tf.nn.rnn_cell.LSTMCell(n_hidden)
