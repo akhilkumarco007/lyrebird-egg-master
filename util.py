@@ -21,10 +21,6 @@ def array_splitter(input_array):
     x = input_array
     y = np.roll(x, 1, axis=0)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=7)
-    # data_size = len(input_array)
-    # split_data = np.split(input_array, [int(0.8 * data_size), data_size])
-    # x_train, x_test = split_data[0], split_data[1]
-    # y_train, y_test = np.roll(x_train, 1, axis=0), np.roll(x_test, 1, axis=0)
     return x_train, x_test, y_train, y_test
 
 
