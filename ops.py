@@ -28,39 +28,41 @@ def bias_variable(shape):
                            initializer=initer)
 
 
-def LSTM(x, weights, biases, num_hidden, seqLen, mode):
+def LSTM(x, weights, biases, num_hidden, seqLen):
     """
     :param x: inputs of size [T, batch_size, input_size]
     :param weights: matrix of fully-connected output layer weights
     :param biases: vector of fully-connected output layer biases
     :param num_hidden: number of hidden units
     """
-    if mode == 'train':
-        # cell = tf.nn.rnn_cell.LSTMCell(num_hidden)
-        multi_lstm_cell = tf.nn.rnn_cell.MultiRNNCell([lstm_cell(num_hidden) for _ in range(2)])
-        outputs, states = tf.nn.dynamic_rnn(multi_lstm_cell, x, sequence_length=seqLen, dtype=tf.float32)
-        num_examples = tf.shape(x)[0]
-        w_repeated = tf.tile(tf.expand_dims(weights, 0), [num_examples, 1, 1])
-        out = tf.matmul(outputs, w_repeated) + biases
-        out = tf.squeeze(out)
-    elif mode == 'infer':
-        initial_seed_input = np.array([[0, 0, 0]])
-        multi_lstm_cell = tf.nn.rnn_cell.MultiRNNCell([lstm_cell(num_hidden) for _ in range(2)])
-        state = tf.zeros((256, 256))
-        out = []
-        time_steps = 800
-        for t in range(time_steps):
-            if t == 0:
-                output, state = multi_lstm_cell(initial_seed_input, state)
-                out.append(output)
-            else:
-                output, state = multi_lstm_cell(out[t - 1], state)
-                out.append(output)
-    else:
-        raise ValueError('Use train or infer for mode')
+    multi_lstm_cell = tf.nn.rnn_cell.MultiRNNCell([lstm_cell(num_hidden) for _ in range(3)])
+    outputs, states = tf.nn.dynamic_rnn(multi_lstm_cell, x, sequence_length=seqLen, dtype=tf.float32)
+    num_examples = tf.shape(x)[0]
+    w_repeated = tf.tile(tf.expand_dims(weights, 0), [num_examples, 1, 1])
+    out = tf.matmul(outputs, w_repeated) + biases
+    out = tf.squeeze(out)
     return out
 
 
 def lstm_cell(n_hidden):
     lstm = tf.nn.rnn_cell.LSTMCell(n_hidden)
     return lstm
+
+
+def rnn_sampling(num_hidden, initial_input, weights, biases):
+    multi_lstm_cell = tf.nn.rnn_cell.MultiRNNCell([lstm_cell(num_hidden) for _ in range(3)])
+    state = multi_lstm_cell.zero_state(1, dtype=tf.float32)
+    out = []
+    time_steps = 200
+    for t in range(time_steps):
+        if t == 0:
+            output, state = multi_lstm_cell(initial_input, state)
+            output = tf.matmul(output, weights) + biases
+            output = tf.squeeze(output[0])
+            out.append(output)
+        else:
+            output, state = multi_lstm_cell(tf.reshape(out[t - 1], [1, 3]), state)
+            output = tf.matmul(output, weights) + biases
+            output = tf.squeeze(output[0])
+            out.append(output)
+    return out

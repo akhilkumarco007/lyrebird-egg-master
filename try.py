@@ -1,10 +1,21 @@
 import numpy as np
+import string
 
-a = np.array([[[1, 2, 3], [2, 3, 4], [5, 6, 7], [6, 9, 1]],
-                    [[5, 6, 9], [7, 0, 5], [7, 8, 4], [8, 9, 0]],
-                    [[3, 2, 1], [4, 3, 5], [5, 6, 7], [9, 8, 4]],
-                    [[1, 6, 0], [4, 3, 1], [6, 0, 3], [3, 5, 7]]])
-b = np.array([[0, 0, 0]])
+from utils import plot_stroke
 
+input_data = np.load('./data/strokes.npy', encoding='latin1')
 
-print(a[:, 1, :])
+# plot_stroke(input_data[2])
+
+exclude = set(string.punctuation)
+sentences = []
+with open('./data/sentences.txt', 'r') as f:
+    for line in f:
+        for c in exclude:
+            line = line.replace(c, " ")
+        words = line.split()
+        for word in words:
+            if word.lower() not in sentences:
+                sentences.append(word.lower())
+
+print()

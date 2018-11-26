@@ -10,7 +10,7 @@ learning_rate = 0.1             # The optimization initial learning rate
 epochs = 10000                  # Total number of training steps
 batch_size = 32                 # Size of each batch
 val_display_frequency = 100
-train_disp_freq = 50
+train_disp_freq = 15
 mode = 'train'
 
 # Processing input data
@@ -20,7 +20,7 @@ x_train, x_test, y_train, y_test = array_splitter(strokes)
 x_train_len, x_test_len, y_train_len, y_test_len = array_splitter(input_seq_len)
 
 input_dim = 3
-num_hidden_units = 256
+num_hidden_units = 512
 out_dim = 3
 
 x = tf.placeholder(tf.float32, shape=[None, max_seq_len, input_dim])
@@ -35,7 +35,7 @@ with tf.name_scope('weights'):
     tf.summary.histogram('b', b)
 
 # LSTM construction
-pred_out = LSTM(x, w, b, num_hidden_units, seq_len, mode)
+pred_out = LSTM(x, w, b, num_hidden_units, seq_len)
 
 with tf.name_scope('loss'):
     cost = tf.reduce_mean(tf.square(pred_out - y))
