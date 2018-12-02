@@ -1,11 +1,3 @@
-# Handwriting generation!
-
-Hey! Welcome to Lyrebird! We're excited to have you here. Since we work a lot with neural networks, this task will introduce you to the kind of models that we work with everyday. If you get stuck, please contact me and I'll be happy to provide hints.
-
-We will solve a fun problem: handwriting generation. This problem involves 2 sequences: a sequence of text (input) and a sequence of points related to the position of a pen (output). If you haven't done it before, please check out [this great paper](https://arxiv.org/pdf/1308.0850.pdf) by Alex Graves. When you finish this task, you should have your own personal scribe :)
-
-```Note: There are many solutions for this task available online. Please, don't look at them while solving it. The purpose of this task is to get you started into the kind of work we do at Lyrebird. We care a lot about your thought processes, the ideas you have to solve difficult problems and your coding style. Trying to copy a solution available online defeats the purpose of this task. Furthermore, it will be very easy to realize if you didn't solve it on your own.```
-
 
 ### Data description:
 
@@ -47,9 +39,3 @@ def recognize_stroke(stroke):
     #   text - str
     return stroke
 ```
-
-### Evaluation
-To evaluate your work, please change the second block of imports of the `results.ipynb` notebook. Also, please provide us a link to a github repo to see your work.
-
-## References:
- [1] https://arxiv.org/abs/1308.0850
